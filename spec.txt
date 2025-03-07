@@ -1,0 +1,44 @@
+[better-sql3]
+이는 그것이 추가적인 설정이나 데이터베이스 없이
+로컬에서 사용할 수 있는
+훌륭한 SQL 데이터베이스이기 때문입니다
+
+sqlite데이터베이스
+- 개발용으로 많이 사용
+- ORM(Object Relational Mapping): 서버에서 데이터베이스를 손쉽게 다루도록 도와주는 툴을 의미함
+- 데이터베이스 모델링을 쉽게 할 수 있음
+- SQL을 사용하지 않고 CRUD 작업을 할 수 있음
+
+
+장점 
+함수를 정의해두고 바로 사용할 수 있다
+별도의 http request를 보내는 식이 필요없다 
+현재 프로젝트의 경우 meals.js 에 데이터를 fetching해오는 함수 getMeals()을 정의해 두었으며 
+이 meal 데이터들을 필요로 하는 페이지 컴포넌트 meal/page.js 에서 이 함수를 호출하며 데이터를 가지고 올 수 있다 
+
+sqlite3 와 같은 db 라이브러리가 
+query injection 공격을 방지하는 기술 : query-param 바인딩 
+
+
+[sql injection 공격의 예시- 어떻게 일어나는가]
+SQL 인젝션 공격의 예시
+SQL 인젝션 공격은 공격자가 애플리케이션의 입력 필드에 악의적인 SQL 코드를 삽입하여 데이터베이스에서 의도하지 않은 동작을 일으키는 공격입니다. 예를 들어, 사용자가 로그인 폼에 username과 password를 입력하는 상황을 가정해 보겠습니다. 만약 애플리케이션이 다음과 같은 방식으로 SQL 쿼리를 작성한다면:
+
+javascript
+복사
+const query = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
+만약 사용자가 username에 " OR 1=1 --를 입력하고 password는 빈 문자열로 남겨두면, 실제로 실행되는 쿼리는 다음과 같습니다:
+
+sql
+복사
+SELECT * FROM users WHERE username = '' OR 1=1 --' AND password = ''
+여기서 OR 1=1은 항상 참이 되므로, -- 이후는 주석 처리되어 나머지 조건이 무시됩니다. 따라서 이 쿼리는 모든 사용자 정보를 반환하게 되며, 공격자는 인증을 우회할 수 있습니다.
+
+방어 방법: 파라미터 바인딩
+위의 SQL 인젝션 공격을 피하려면, 동적 값을 직접 쿼리에 삽입하지 않고, 파라미터 바인딩을 사용해야 합니다. better-sqlite3 같은 라이브러리는 이 방식을 자동으로 처리하여 안전하게 데이터를 쿼리에 바인딩합니다. 예를 들어:
+
+javascript
+복사
+export async function getUser(username, password) {
+    return db.prepare('SELECT * FROM users WHERE username = ? AND password = ?').get(username, password);
+}
