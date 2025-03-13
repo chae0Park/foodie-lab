@@ -18,6 +18,9 @@ export default function MainHeader() {
                 <nav className={classes.nav}>
                     <ul>
                         <li>
+                            <NavLink href='/auth/signin'>Log in</NavLink>
+                        </li>
+                        <li>
                             <NavLink href='/meals'>Browse Meal</NavLink>
                         </li>
                         <li>
