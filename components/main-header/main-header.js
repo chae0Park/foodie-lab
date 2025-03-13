@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import NavLink from "./nav-link";
+import CommunityLink from "./community-drop-down";
 import logoImg from '@/assets/logo.png';
 import classes from './main-header.module.css';
 import MainHeaderBackground from "./main-header-background";
@@ -23,10 +24,8 @@ export default function MainHeader() {
                         <li>
                             <NavLink href='/meals'>Browse Meal</NavLink>
                         </li>
-                        <li>
-                            <NavLink href='/community'>Foodies Community</NavLink>
-                        </li>
-                    </ul>
+                        <CommunityLink />
+                    </ul>                    
                 </nav>
             </header>
         </>
