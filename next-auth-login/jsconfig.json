@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",  // 루트 폴더를 기준으로 설정
     "paths": {
       "@/*": ["./*"]
     }
