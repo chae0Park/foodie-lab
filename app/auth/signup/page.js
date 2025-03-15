@@ -9,7 +9,7 @@ import { validateUser } from '@/lib/action';
 
 
 export default function SignUp() {
-      const [ state, formAction ] = useFormState(validateUser, {message: null});
+    const [ state, formAction ] = useFormState(validateUser, {message: null});
     
     return (
         <div>
