@@ -2,9 +2,9 @@
 import NextAuth from 'next-auth/next'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
-const handler = NextAuth({
+
+export const handler = NextAuth({
     providers: [
-      // ID, PW 로그인 방식
         CredentialsProvider({
             name: 'Credentials',
             credentials: {
@@ -12,7 +12,8 @@ const handler = NextAuth({
                 password: { label: 'Password', type: 'password' },
             },
             async authorize(credentials, req) {
-                const res = await fetch(`&{process.env.NEXTAUTH_URL}/api/login`, {
+                console.log(credentials);
+                const res = await fetch(`${process.env.NEXTAUTH_URL}/api/login`, { //api 폴더명을 꼭 login으로 
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -34,6 +35,12 @@ const handler = NextAuth({
             },
         }),
     ],
+    session: {
+        strategy: "jwt", // JWT 세션 사용 설정
+    },
+    pages: {
+        signIn: "/auth/signin",  // 로그인 페이지 경로 설정 (옵션)
+    },
 })
 
 export { handler as GET, handler as POST }

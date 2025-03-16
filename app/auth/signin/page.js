@@ -3,12 +3,32 @@ import classes from './page.module.css'
 import Link from 'next/link'
 import Input from '@/components/input'
 import SubmitButton from '@/components/submit-button'
-import { useFormState } from 'react-dom';
-import { validateLogin } from '@/lib/action';
+import { useState } from 'react'
+import { signIn } from 'next-auth/react'
 
 export default function SignIn() {
-    const [ state, formAction ] = useFormState(validateLogin, {message: null});
-    
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState(''); 
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        // NextAuth 로그인 요청
+        const res = await signIn('credentials', {
+            email,
+            password,
+            redirect: false, // 로그인 후 리디렉션 방지
+        })
+
+        if (res?.error) {
+            setError('Invalid email or password')
+        } else {
+            // 로그인 성공 시 리디렉션
+            window.location.href = '/' // 홈으로 리디렉션
+        }
+    }
+
     return(
         <div>
             <header className={classes.header}>
@@ -24,10 +44,10 @@ export default function SignIn() {
                 </p>
             </header>
             <main className={classes.main}>
-                <form className={classes.form} method='POST' action={formAction}>
-                    <Input type={'email'} name={'email'} label={'Your email'} />
-                    <Input type={'password'} name={'password'} label={'Your password'} />
-                    {state.message && <p>{state.message}</p>}
+                <form className={classes.form} onSubmit={handleSubmit}>
+                    <Input type={'email'} name={'email'} label={'Your email'} value={email} fn={(e) => setEmail(e.target.value)}/>
+                    <Input type={'password'} name={'password'} label={'Your password'} value={password}  fn={(e) => setPassword(e.target.value)}/>
+                    {error && <p>{error}</p>}
                     <p className={classes.actions}>
                         <SubmitButton text={'Sign in'}/>
                     </p>

@@ -10,21 +10,6 @@ export async function saveUser(user){
             name: user.name,
         },
     });
-    console.log('User saved', newUser);
+    console.log('User saved', newUser.name);
 }
-
-export async function getUser(loginInfo){
-    // By unique identifier
-    const user = await prisma.user.findFirst({
-        where: {
-          email: loginInfo.email,
-        },
-      });
-
-    if (user && (await bcrypt.compare(loginInfo.password, user.password))) {
-        const { password, ...userWithoutPass } = user
-        return new Response(JSON.stringify(userWithoutPass))
-    } else return new Response(JSON.stringify(null))
-}
-
 

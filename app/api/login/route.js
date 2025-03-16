@@ -1,4 +1,5 @@
-import prisma from '@/app/lib/prisma'
+// app/ api/ signin/ route.js
+import prisma from '@/lib/prisma'
 import * as bcrypt from 'bcrypt'
 
 
@@ -16,5 +17,5 @@ export async function POST(request) {
   if (user && (await bcrypt.compare(body.password, user.password))) {
     const { password, ...userWithoutPass } = user
     return new Response(JSON.stringify(userWithoutPass))
-  } else return new Response(JSON.stringify(null))
+  } else return new Response(JSON.stringify(null))  
 }

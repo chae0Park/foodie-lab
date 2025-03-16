@@ -24,8 +24,7 @@ export default function SignUp() {
                     <Input type={'password'} name={'password'} label={'Your password'} />
                     <Input type={'text'} name={'name'} label={'Your name'} />
                     {state.message && <p>{state.message}</p>}
-                    {/* <ImagePicker label='Your image' name='image' />
-                    {state.message && <p>{state.message}</p>} */}
+                    {/* <ImagePicker label='Your image' name='image' /> */}
                     <p className={classes.actions}>
                         <SubmitButton text={'Sign up'} />
                     </p>
