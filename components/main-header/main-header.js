@@ -27,16 +27,16 @@ export default function MainHeader() {
 
                 <nav className={classes.nav}>
                     <ul>
-                        <li>
-                            {(session && session.user) ? (
-                                <>
-                                     <p>welcome {session.user.name}</p>
-                                     <button onClick={handleLogout}>Log out</button>
-                                </>
-                            )
-                            : (<NavLink href='/auth/signin'>Log in</NavLink>)}
-                            
-                        </li>
+                        {(session && session.user) ? (
+                            <li>
+                                <button onClick={handleLogout}>Log out</button>
+                            </li>
+                        )
+                            : (
+                                <li>
+                                    <NavLink href='/auth/signin'>Log in</NavLink>
+                                </li>)
+                        }
                         <li>
                             <NavLink href='/meals'>Browse Meal</NavLink>
                         </li>
