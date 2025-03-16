@@ -13,3 +13,4 @@ export async function saveUser(user){
     console.log('User saved', newUser.name);
 }
 
+//게시물 조회 api 

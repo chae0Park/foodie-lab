@@ -35,6 +35,18 @@ export const handler = NextAuth({
             },
         }),
     ],
+    callbacks:{
+        //token정보와 user정보를 하나의 obj로 리턴
+        async jwt({token, user}){
+            return {...token, ...user};
+        },
+        async session({session, token}){
+            console.log('$$$ token', token);
+            session.user = token;
+            console.log('$$$ session: ', session)
+            return session;
+        },
+    },
     session: {
         strategy: "jwt", // JWT 세션 사용 설정
     },
