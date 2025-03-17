@@ -29,7 +29,7 @@ export default function MainHeader() {
                     <ul>
                         {(session && session.user) ? (
                             <li>
-                                <button onClick={handleLogout}>Log out</button>
+                                <NavLink href='/' fn={handleLogout}>Log out</NavLink>
                             </li>
                         )
                             : (
