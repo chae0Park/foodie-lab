@@ -1,44 +1,51 @@
 import classes from './page.module.css';
-import { getMeal } from '@/lib/meals';
+import { getRecipe } from '@/lib/recipe';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 
-//동적으로 메타데이터 설정 
-export async function generateMetadata({ params }){
-    const meal = getMeal(params.mealSlug);
-    return{
-        title: meal.title,
-        description: meal.summary,
+
+// 동적으로 메타데이터 설정
+export async function generateMetadata({ params }) {
+    const recipe = await getRecipe(params.mealSlug);  // await 추가
+    if (!recipe) {
+        return {
+            title: 'Recipe Not Found',
+            description: 'The recipe you are looking for was not found.',
+        };
     }
+    return {
+        title: recipe.title,
+        description: recipe.summary,
+    };
 }
 
-export default function MealDetailPage({ params }){
-    const meal = getMeal(params.mealSlug);
+export default async function MealDetailPage({ params }){
+    const recipe = await getRecipe(params.mealSlug);
 
-    if(!meal){
+    if(!recipe){
         notFound();
     }
 
-    meal.instructions = meal.instructions.replace(/\n/g, '<br />');
+    recipe.instructions = recipe.instructions.replace(/\n/g, '<br />');
 
     return<>
         <header className={classes.header}>
             <div className={classes.image}>
-                <Image src={meal.image} alt={meal.title} fill />
+                <Image src={recipe.images} alt={recipe.title} fill />
             </div>
             <div className={classes.headerText}>
-                <h1>{meal.title}</h1>
+                <h1>{recipe.title}</h1>
                 <p className={classes.creator}>
-                    by <a href={`mailto: ${meal.creator_email}`}>{meal.creator}</a>
+                    by <a href={`mailto: ${recipe.author.email}`}>{recipe.author.name}</a>
                 </p>
-                <p className={classes.summary}>{meal.summary}</p>
+                <p className={classes.summary}>{recipe.summary}</p>
             </div>
         </header>
         <main >
             <p
                 className={classes.instructions}
                 dangerouslySetInnerHTML={{
-                    __html: meal.instructions,
+                    __html: recipe.instructions,
                 }}
             >
 
