@@ -1,0 +1,8 @@
+[문제]
+next.js 에서는 request response 객체모두 NextRequest 와 NextResponse로 사용된다 
+그래서 authorization을 가져올 때 
+
+const authorizationHeader = req.headers.authorization; 으로 하면 백날 해도 undefined로 나옴 
+
+[해결]
+const authorizationHeader = req.headers.get('Authorization');

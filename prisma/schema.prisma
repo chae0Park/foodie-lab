@@ -39,17 +39,24 @@ model Post {
   instructions String 
   author     User       @relation(fields: [authorId], references: [id])
   authorId   Int
-  categories Category[]
+  images     PostImage[] 
+  categories Category   @default(RECIPE)
 }
 
-// meals, items, events
-model Category {
-  id    Int    @id @default(autoincrement())
-  name  String
-  posts Post[]
+model PostImage {
+  id        Int      @id @default(autoincrement())
+  url       String   // 이미지 URL
+  post      Post     @relation(fields: [postId], references: [id])  // 연결된 포스트
+  postId    Int      // Post 모델과 연결
 }
 
 enum Role {
   USER
   ADMIN
+}
+
+enum Category {
+  RECIPE
+  ITEM
+  EVENT
 }
