@@ -1,8 +1,96 @@
 [문제]
+api세팅,  app/ api/ auth/ [...nextauth]/ route.js 
+nextauth 에서 제공하는 signin, signout 기능을 사용하기 위해 import NextAuth from 'next-auth/next' 로 가져온 
+NextAuth를 이용해 handler를 재정의 하려고 하였으나 계속해서 에러 발생 
+
+[해결]
+fetch(`${process.env.NEXTAUTH_URL}/api/login` -> url을 login 으로 설정해두고 정작 api를 처리하는 파일의 경로를 api/signin으로 지정 
+(next.js 와 구글링한 블로그 예시에서는 파일의 경로를 api/signi으로 지정했고 post 메소드를 보낼 때는 /api/login으로 적어둔 것을 그대로 따라 만들었음 )
+경로를 바꿔준 뒤 해결 
+
+[문제]
 next.js 에서는 request response 객체모두 NextRequest 와 NextResponse로 사용된다 
 그래서 authorization을 가져올 때 
-
 const authorizationHeader = req.headers.authorization; 으로 하면 백날 해도 undefined로 나옴 
 
 [해결]
 const authorizationHeader = req.headers.get('Authorization');
+
+
+[문제]
+기존의 방식으로 update, delete 를 수행하는데 한계가 있다. 
+Next.js ssr의 장점을 최대한 살리기 위해 server 코드와 client코드를 따로 만들었는데 
+update, delete 를 수행하는 페이지에서 데이터를 가지고 오기 위해 use server 를 유지하는 방향으로 사용 
+-> update 되거나 delete 되는 데이터가 발생하면 이를 감지하고 바뀐 데이터를 재 업로드 해야하기 때문에 "감지"하는 부분에서 
+어쩔 수 없이 use client를 사용해야함. 이 경우 useEffect를 이용해서 데이터를 가져와 useState 로 데이터를 업데이트 해야하는 경우 발생 
+코드가 길고 복잡해지는 것을 막기 위해 'use client'를 사용하지만 recoil을 이용해서 사용하는 방향으로 생각 중 
+
+[해결]
+DeleteButton 컴포넌트 만듬 
+
+[문제]
+delete api로 slug 안넘어감 
+
+[해결]
+  const url = new URL(request.url);  // 요청 URL 객체를 생성
+  const slug = url.pathname.split('/')[3];  // 슬러그는 URL 경로에서 3번째 부분에 위치
+
+[추후에 찾아봐야하는 것]
+api에서 [slug]를 이용해 slug의 값을 추출하는 방법은?
+
+[문제]
+post를 삭제하기 위해 
+export async function deleteRecipe(slug){
+    // 데이터 삭제
+    await prisma.post.delete({
+        where: { slug: slug }
+    });
+} 함수를 사용했지만 사실 post 안에 외래키를 사용하고 있는 images PostImages 때문에 바로 삭제가 안됌 
+
+  images     PostImage[] 
+
+
+[해결]
+onDelete: Cascade추가 
+
+model PostImage {
+  id        Int      @id @default(autoincrement())
+  url       String   
+  post      Post    @relation(fields: [postId], references: [id], onDelete: Cascade)  // 연결된 포스트
+  postId    Int      // Post 모델과 연결
+}
+
+
+[문제]
+api에서 상대경로를 사용해서 리다이렉트
+redirect('/meals')
+http://localhost:3000/meals/api로 리다이렉트됨 
+
+이유 : redirect('/meals')는 브라우저에서 상대 경로로 /meals 페이지로 리다이렉트하려고 하지만, 
+DELETE 요청이 API 경로에서 처리되고 있기 때문에 해당 경로가 http://localhost:3000/meals/api처럼 
+API 엔드포인트의 하위 경로로 리다이렉트됩니다.
+
+[해결]
+// redirect('http://localhost:3000/meals');  // 성공적으로 삭제
+    return NextResponse.redirect(new URL('/meals', request.url)); -> 작동안함
+
+[문제]
+slugify(한글) -> null이 나옴 
+slug 생성이 안돼서 이미지 파일 저장 그리고 상세 페이지에 접근이 안됌
+
+[해결]
+import kroman from 'kroman';
+kroman 라이브러리 설치 
+  const kromanTitle = kroman.parse(title);
+  const slug = slugify(kromanTitle, { lower: true });
+
+[문제]
+기존 이미지파일 이름을 slug.extenstion 으로 저장 
+슬러그를 post.title로 만들기 때문에 제목이 같은 포스트가 있는경우 파일명이 같아지면서 
+포스트와 동명의 다른사진이 나옴 
+
+[해결]
+사진을 업데이트하는 시점을 만들어서 slug-만든날짜 로 변경한다 
+      const now = new Date();
+      const dateString = now.toISOString().replace(/[-:]/g, "").split('.')[0];  // "2025-03-19T10:30:45" 형식을 "20250319T103045"로 변환
+      const fileName = `${slug}-${dateString}.${extension}`;

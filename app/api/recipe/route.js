@@ -1,9 +1,11 @@
+//api/recipe/route.js
 import { NextResponse } from 'next/server';
 import fs from 'node:fs';
 import slugify from 'slugify';
 import xss from 'xss';
 import prisma from '@/lib/prisma';  // prisma import
 import { verifyJwf } from '@/lib/jwt';  // jwt verification import
+import kroman from 'kroman';
 
 // helper function
 function isInvalidText(text) {
@@ -46,12 +48,15 @@ export async function POST(req) {
       }
 
       // Slug 및 XSS 처리
-      const slug = slugify(title, { lower: true });
+      const kromanTitle = kroman.parse(title);
+      const slug = slugify(kromanTitle, { lower: true });
       const sanitizedInstructions = xss(instructions);
 
       //base64 이미지를 파일로 변환
       const extension = 'jpg'; 
-      const fileName = `${slug}.${extension}`;
+      const now = new Date();
+      const dateString = now.toISOString().replace(/[-:]/g, "").split('.')[0];  // "2025-03-19T10:30:45" 형식을 "20250319T103045"로 변환
+      const fileName = `${slug}-${dateString}.${extension}`;
       const filePath = `public/images/${fileName}`;
 
       //base64 데이터를 Buffer로 변환 후 파일로 저장

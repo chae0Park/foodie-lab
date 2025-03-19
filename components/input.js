@@ -1,4 +1,5 @@
-export default function Input({type, name, label, value, fn }){
+'use client';
+export default function Input({type, name, label, value, fn = () => {} }){
     return(
         <p>
             <label htmlFor={name}>{label}</label>

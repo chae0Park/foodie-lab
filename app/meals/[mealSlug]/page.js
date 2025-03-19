@@ -1,23 +1,26 @@
+// app/meals/[mealSlug]/page.js
 import classes from './page.module.css';
 import { getRecipe } from '@/lib/recipe';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
-
+import CheckSession from './check-auth'
+import Link from 'next/link';
+import DeleteButton from './DeleteButton';
 
 // 동적으로 메타데이터 설정
-export async function generateMetadata({ params }) {
-    const recipe = await getRecipe(params.mealSlug);  // await 추가
-    if (!recipe) {
-        return {
-            title: 'Recipe Not Found',
-            description: 'The recipe you are looking for was not found.',
-        };
-    }
-    return {
-        title: recipe.title,
-        description: recipe.summary,
-    };
-}
+// export async function generateMetadata({ params }) {
+//     const recipe = await getRecipe(params.mealSlug);  // await 추가
+//     if (!recipe) {
+//         return {
+//             title: 'Recipe Not Found',
+//             description: 'The recipe you are looking for was not found.',
+//         };
+//     }
+//     return {
+//         title: recipe.title,
+//         description: recipe.summary,
+//     };
+// }
 
 export default async function MealDetailPage({ params }){
     const recipe = await getRecipe(params.mealSlug);
@@ -39,6 +42,10 @@ export default async function MealDetailPage({ params }){
                     by <a href={`mailto: ${recipe.author.email}`}>{recipe.author.name}</a>
                 </p>
                 <p className={classes.summary}>{recipe.summary}</p>
+                <CheckSession authorEmail={recipe.author.email}>
+                    <Link href={`/meals/${recipe.slug}/edit`}>edit</Link>
+                    <DeleteButton slug={recipe.slug} />
+                </CheckSession>
             </div>
         </header>
         <main >

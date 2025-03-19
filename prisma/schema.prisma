@@ -1,5 +1,7 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
+// 스키마 변경 후 npx prisma migrate dev --name add-cascade-delete
+
 
 generator client {
   provider = "prisma-client-js"
@@ -39,14 +41,14 @@ model Post {
   instructions String 
   author     User       @relation(fields: [authorId], references: [id])
   authorId   Int
-  images     PostImage[] 
+  images     PostImage[]
   categories Category   @default(RECIPE)
 }
 
 model PostImage {
   id        Int      @id @default(autoincrement())
-  url       String   // 이미지 URL
-  post      Post     @relation(fields: [postId], references: [id])  // 연결된 포스트
+  url       String   
+  post      Post    @relation(fields: [postId], references: [id], onDelete: Cascade)  // 연결된 포스트
   postId    Int      // Post 모델과 연결
 }
 

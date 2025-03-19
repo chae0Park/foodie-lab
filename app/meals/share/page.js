@@ -40,7 +40,7 @@ export default function ShareMealPage() {
       const imageBase64 = reader.result.split(',')[1]; //extracting string
 
           // fetch로 폼 데이터를 전송
-      const response = await fetch('/api/user/recipe', {
+      const response = await fetch('/api/recipe', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${accessToken}`,  // JWT 토큰을 헤더에 포함시켜 전송
@@ -90,7 +90,7 @@ export default function ShareMealPage() {
             <input type="text" id="title" name="title" required />
           </p>
           <p>
-            <label htmlFor="summary">Short Summary</label>
+            <label htmlFor="summary">Ingredients</label>
             <input type="text" id="summary" name="summary" required />
           </p>
           <p>

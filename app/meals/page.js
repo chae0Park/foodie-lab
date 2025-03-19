@@ -3,6 +3,7 @@ import Link from 'next/link';
 import classes from './page.module.css';
 import { getRecipes } from '@/lib/recipe';
 import { Suspense } from 'react';
+import CheckSession from '@/components/CheckSession';
 
 async function Meals(){
     const recipes = await getRecipes(); 
@@ -22,11 +23,13 @@ export default function MealsPage(){
                     Choose your favourite recipe and cook it yourself. 
                     It is easy and fun!
                 </p>
-                <p className={classes.cta}>
-                    <Link href='/meals/share'>
-                        Share your Recipes
-                    </Link>
-                </p>
+                <CheckSession>
+                    <p className={classes.cta}>
+                        <Link href='/meals/share'>
+                            Share your Recipes
+                        </Link>
+                    </p>
+                </CheckSession>
             </header>
             <main className={classes.main}>
                 <Suspense fallback={<p className={classes.loading}>Fetching meals...</p>}> 
