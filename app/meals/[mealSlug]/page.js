@@ -8,19 +8,19 @@ import Link from 'next/link';
 import DeleteButton from './DeleteButton';
 
 // 동적으로 메타데이터 설정
-// export async function generateMetadata({ params }) {
-//     const recipe = await getRecipe(params.mealSlug);  // await 추가
-//     if (!recipe) {
-//         return {
-//             title: 'Recipe Not Found',
-//             description: 'The recipe you are looking for was not found.',
-//         };
-//     }
-//     return {
-//         title: recipe.title,
-//         description: recipe.summary,
-//     };
-// }
+export async function generateMetadata({ params }) {
+    const recipe = await getRecipe(params.mealSlug);  // await 추가
+    if (!recipe) {
+        return {
+            title: 'Recipe Not Found',
+            description: 'The recipe you are looking for was not found.',
+        };
+    }
+    return {
+        title: recipe.title,
+        description: recipe.summary,
+    };
+}
 
 export default async function MealDetailPage({ params }){
     const recipe = await getRecipe(params.mealSlug);

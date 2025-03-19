@@ -1,5 +1,5 @@
 'use client';
-export default function Input({type, name, label, value, fn = () => {} }){
+export default function Input({type, name, label, value, fn = () => {}, disabled = false}) {
     return(
         <p>
             <label htmlFor={name}>{label}</label>
@@ -9,7 +9,9 @@ export default function Input({type, name, label, value, fn = () => {} }){
                 name={name} 
                 value={value}
                 onChange={fn}
-                required  />
+                required  
+                disabled={disabled}    
+            />
         </p>
     )
 }

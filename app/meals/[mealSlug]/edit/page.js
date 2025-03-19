@@ -65,24 +65,21 @@ export default async function EditMealPage({ params }) {
         <form className={classes.form}>
           {/* onSubmit={handleSubmit} */}
           <div className={classes.row}>
-              <Input type={'text'} name={'name'} label={'Your name'} value={recipe.author.name} disabled/>
-              <Input type={'email'} name={'email'} label={'Your email'} value={recipe.author.email} disabled/>
-              <Input type={'text'} name={'title'} label={'title'} value={recipe.title}/>
-              <Input type={'text'} name={'title'} label={'title'} value={recipe.title}/>
-              <Input type={'text'} name={'title'} label={'title'} value={recipe.title}/>
-              <Input type={'text'} name={'summary'} label={'summary'} value={recipe.summary}/>
-
-              {/* <label htmlFor="instructions">Instructions</label>
-              <textarea
-                id="instructions"
-                name="instructions"
-                rows="10"
-                defaultValue={meal.instructions}  // 기존 데이터 채우기
-                required
-              /> */}
-              <Input type={'textarea'} name={'instructions'} label={'instructions'} value={recipe.instructions}/>
-
+              <Input type={'text'} name={'name'} label={'Your name'} value={recipe.author.name} labelClassName={'inputLabel'} inputClassName={'inputTag'} disabled/>
+              <Input type={'email'} name={'email'} label={'Your email'} value={recipe.author.email} labelClassName={'inputLabel'} inputClassName={'inputTag'} disabled/>
           </div>
+          <Input type={'text'} name={'title'} label={'title'} value={recipe.title} labelClassName={'inputLabel'} inputClassName={'inputTag'}/>
+          <Input type={'text'} name={'summary'} label={'summary'} value={recipe.summary} labelClassName={'inputLabel'} inputClassName={'inputTag'}/>
+          <p>
+            <label htmlFor="instructions">Instructions</label>
+            <textarea
+              id="instructions"
+              name="instructions"
+              rows="10"
+              required
+              value={recipe.instructions}
+            ></textarea>
+          </p>
           <ImagePicker label="Your image" name="image" editImg={recipe.images} />
           <p className={classes.actions}>
             <SubmitButton text={"Update recipe"} />
