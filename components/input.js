@@ -7,7 +7,7 @@ export default function Input({type, name, label, value, fn = () => {}, disabled
                 type={type} 
                 id={name} 
                 name={name} 
-                value={value}
+                value ={value}
                 onChange={fn}
                 required  
                 disabled={disabled}    

@@ -14,7 +14,7 @@ function isInvalidText(text) {
 
 /* next.js 에서 메소드 사용할 때 function 이름으로 명시적으로 나타내야 하고 default가 아닌 export만 사용*/
 export async function POST(req) {
-  console.log('api/user/recipe/route.js호출');
+  console.log('api/recipe/route.js호출');
 
   // Authorization 헤더 확인
   const authorizationHeader = req.headers.get('Authorization');

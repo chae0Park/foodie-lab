@@ -36,19 +36,13 @@ export default function ImagePicker({ label, name, editImg }){
             <div className={classes.controls}>
                 <div className={classes.preview}>
                     {!pickedImage && <p>No image is picked yet.</p>}
-                    {pickedImage ? (
-                        <Image 
-                            src={pickedImage}
-                            alt='The image selected by the user.'
-                            fill
-                        />
-                    ) : editImg ? (
-                        <Image 
-                            src={editImg}
-                            alt='The image selected by the user.'
-                            fill
-                        />
-                    ) : null}
+                   
+                    <Image 
+                        src={pickedImage ? pickedImage : editImg}
+                        alt='The image selected by the user.'
+                        fill
+                    />
+                
                 </div>
                 <input
                     className={classes.input} 
@@ -59,7 +53,7 @@ export default function ImagePicker({ label, name, editImg }){
                     ref={imageInput}
                     //multiple
                     onChange={handleImageChange}
-                    required
+                    //required
                 />
                 <button
                     className={classes.button}
