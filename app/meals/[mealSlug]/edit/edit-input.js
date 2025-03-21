@@ -62,13 +62,9 @@ export default function EditForm({recipe}) {
 
         formDataObj.slug = params.mealSlug;
 
-        //이미지 처리
-        // 이미지가 새로 선택된 경우 처리
+        //새로 선택된 이미지 처리
         if (formDataObj.image && formDataObj.image.size > 0) {
             const image = formDataObj.image;
-
-            // console.log('새로 선택한 이미지 값은 ?:', image);
-            // await sendUpdateRequest(formDataObj, newImageBase64);
             const reader = new FileReader();
             reader.readAsDataURL(image);
             reader.onload = async () => {
@@ -79,8 +75,8 @@ export default function EditForm({recipe}) {
             };
             
         } else {
-            //await sendUpdateRequest(formDataObj);
-            await sendUpdateRequest(formDataObj, recipe.images);
+            await sendUpdateRequest(formDataObj);
+            //await sendUpdateRequest(formDataObj, recipe.images);
         }
     };
 
@@ -93,16 +89,22 @@ export default function EditForm({recipe}) {
           console.log('accessToken 값은?', accessToken);
         }
 
+        const requestBody = {
+            ...formDataObj,
+        };
+
+        // imageBase64가 있다면 추가
+        if (imageBase64) {
+            requestBody.imageBase64 = imageBase64;
+        }
+
         const response = await fetch(`/api/recipe/${params.mealSlug}`, {
             method: 'PUT',  // 기존 데이터를 수정하는 PUT 요청
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                ...formDataObj,
-                imageBase64,  
-            }),
+            body: JSON.stringify(requestBody),
         });
 
         if (response.ok) {

@@ -72,7 +72,18 @@ export async function PUT(req) {
   // }
 
   const slug = body.slug
-  const imageBase64 = body.imageBase64;
+
+  //레시피 데이터 업데이트트
+  const updatedData = {
+    title: body.title,
+    summary: body.summary,
+    instructions: body.instructions,
+  };
+
+  let imageBase64;
+  if(body.imageBase64){
+    imageBase64 = body.imageBase64;
+  }
 
   //이미지 저장
   let imageUrl;
@@ -86,37 +97,25 @@ export async function PUT(req) {
     const buffer = Buffer.from(imageBase64, 'base64');  // base64를 buffer로 변환
     await fs.promises.writeFile(filePath, buffer);
 
-      // 이미지 URL 설정
-      imageUrl = `/images/${fileName}`;
-    
-    // } else {
-    //   imageUrl = imageBase64;
-    // }
+    // 이미지 URL 설정
+    imageUrl = `/images/${fileName}`;
 
-    // 레시피를 DB에 업데이트하는 부분
-    try {
+    updatedData.images = imageUrl;
       
-      const updatedData = {
-        title: body.title,
-        summary: body.summary,
-        instructions: body.instructions,
-      };
-
-      // imageUrl이 존재하면 images에 추가
-      if (imageUrl) {
-        updatedData.images = imageUrl;
-      }
-
-      await updateRecipe(slug, updatedData);
-
-      // 성공적으로 수정한 경우
-      return NextResponse.json({
-        message: "Recipe updated successfully",
-        data: updatedData,
-    });
-    } catch (err) {
-      console.error('Error updating recipe:', err);
-      return NextResponse.json({ message: 'Failed to update recipe' }, { status: 500 });
-    }
   }
+
+  try {  
+
+    await updateRecipe(slug, updatedData);
+
+    // 성공적으로 수정한 경우
+    return NextResponse.json({
+      message: "Recipe updated successfully",
+      data: updatedData,
+  });
+  } catch (err) {
+    console.error('Error updating recipe:', err);
+    return NextResponse.json({ message: 'Failed to update recipe' }, { status: 500 });
+  }
+  
 }
