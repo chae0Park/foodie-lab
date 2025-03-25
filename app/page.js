@@ -12,8 +12,8 @@ export default function Home() {
           </div>
           <div>
             <div className={classes.hero}>
-              <h1>NextLevel Food for NextLevel Foodies</h1>
-              <p>Taste & share food from all over the world.</p>
+              <h1>Cook Smart, Eat Well</h1>
+              <p>Revolutionizing Home Cooking with Everyday Ingredients</p>
             </div>
             <div className={classes.cta}>
               <Link href="/community">Join the Community</Link>
@@ -23,28 +23,25 @@ export default function Home() {
         </header>
         <main>
           <section className={classes.section}>
-            <h2>How it works</h2>
+            {/* <h2>Revolutionizing Home Cooking with Everyday Ingredients</h2> */}
             <p>
-              NextLevel Food is a platform for foodies to share their favorite
-              recipes with the world. It&apos;s a place to discover new dishes, and to
-              connect with other food lovers.
+              In a world where the cost of living is rising and takeout has become a go-to, 
+              we believe cooking at home can be both easy and affordable. 
             </p>
             <p>
-              NextLevel Food is a place to discover new dishes, and to connect
-              with other food lovers.
+              At Revive and Dine, we&apos;re on a mission to inspire creativity in the kitchen, save you money, 
+              and help you stay healthy—all with the ingredients you already keep in your fridge.
             </p>
           </section>
 
           <section className={classes.section}>
-            <h2>Why NextLevel Food?</h2>
+            <h2>How It Works</h2>
             <p>
-              NextLevel Food is a platform for foodies to share their favorite
-              recipes with the world. It&apos;s a place to discover new dishes, and to
-              connect with other food lovers.
+              Revive and Dine is a community-driven platform where foodies share their clever recipes made with what&apos;s in their fridge or even leftover takeout. 
+              Whether it's turning last night&apos;s dinner into a new meal or utilizing pantry staples, 
             </p>
             <p>
-              NextLevel Food is a place to discover new dishes, and to connect
-              with other food lovers.
+              our goal is to help you find fresh inspiration to cook more at home, save money, and reduce food waste.
             </p>
           </section>
         </main>

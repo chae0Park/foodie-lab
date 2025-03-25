@@ -109,6 +109,7 @@ export default function EditForm({recipe}) {
 
         if (response.ok) {
             window.location.href = `/meals/${params.mealSlug}`;  // 수정 완료 후 해당 페이지로 리디렉션
+
         } else {
             console.error('폼 제출 실패');
         }

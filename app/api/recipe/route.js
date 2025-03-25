@@ -18,9 +18,6 @@ export async function POST(req) {
 
   // Authorization 헤더 확인
   const authorizationHeader = req.headers.get('Authorization');
-  // console.log('리퀘스트 헤더Authorization Header:', req.headers);
-  // console.log('그럼 token 값은?:', authorizationHeader);
-
 
     const accessToken = authorizationHeader?.split(' ')[1];
     if (!accessToken) {
@@ -31,7 +28,7 @@ export async function POST(req) {
       console.log('$$$ accessToken의 값은?', accessToken);
     }
 
-    const user = verifyJwf(accessToken); // JWT 토큰에서 유저 정보 추출
+    const user = verifyJwf(accessToken); 
 
     try {
       const body = await req.json();

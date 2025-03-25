@@ -1,21 +1,30 @@
-import classes from './page.module.css'
+import classes from './page.module.css';
+import CheckAccessToken from '@/components/check-accessToken';
+import WriteLinkBtn from '@/components/common/write-link-btn';
+import Grid from '@/components/common/grid';
+import { getItems } from '@/lib/item';
+
+
+async function Items(){
+    const items = await getItems(); 
+    return <Grid items={items} />
+}
+
 
 export default function NearBuy(){
     return(
-        <>
+        <CheckAccessToken>
             <header className={classes.header}>
                 <h1>
-                Share or Split your extra ingredients! 
+                Share or sell your extra ingredients or kitchenwares! 
                 </h1>
-                <p>
-                You can sell or share your extra ingredients with other members!
-                </p>
+                <WriteLinkBtn href={'/community/nearbuy/post'}>add your item</WriteLinkBtn>
             </header>
             <main className={classes.main}>
-                {/* <Suspense fallback={<p className={classes.loading}>Fetching meals...</p>}> 
-                    <Meals/>
-                </Suspense> */}
+                <Suspense fallback={<p className={classes.loading}>Fetching meals...</p>}> 
+                    <Items/>
+                </Suspense>
             </main>
-        </>
+        </CheckAccessToken>
     )
 }

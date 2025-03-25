@@ -3,8 +3,8 @@ import './globals.css';
 import  Providers from '@/app/_components/Providers';
 
 export const metadata = {
-  title: 'NextLevel Food',
-  description: 'Delicious meals, shared by a food-loving community.',
+  title: 'Revive & Dine',
+  description: 'Revolutionizing Home Cooking with Everyday Ingredients.',
 };
 
 export default function RootLayout({ children }) {

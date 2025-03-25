@@ -1,0 +1,5 @@
+John Doe	johndoe@example.com	    Password123!
+Jane Smith	janesmith@example.com	SecurePass456#
+Bob Johnson	bobjohnson@example.com	MyPassword789$
+Alice Brown	alicebrown@example.com	P@ssw0rd987
+Charlie Green	charliegreen@example.com	GreenPass2025!

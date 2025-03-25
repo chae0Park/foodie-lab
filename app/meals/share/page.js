@@ -5,10 +5,17 @@ import ImagePicker from '@/components/meals/image-picker';
 import { useSession } from "next-auth/react";
 import SubmitButton from '@/components/submit-button'
 
+
 export default function ShareMealPage() {
   const { data: session, status } = useSession();
+
   if (status === "loading") {
     return <div>Loading...</div>;
+  }
+
+  const accessToken = session.user.accessToken;
+  if(!accessToken){
+    notFound();
   }
 
 
@@ -16,7 +23,7 @@ export default function ShareMealPage() {
     e.preventDefault();  // 기본 폼 제출 동작 방지
   
     //accessToken을 가져와야하는데 session에 저장해 두었음 
-    const accessToken = session.user.accessToken;
+    // const accessToken = session.user.accessToken;
     if(!accessToken){
       console.error('No accessToken');
     }else{

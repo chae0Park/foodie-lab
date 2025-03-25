@@ -99,7 +99,7 @@ export async function PUT(req) {
 
     // 이미지 URL 설정
     imageUrl = `/images/${fileName}`;
-
+    console.log('수정하기 imageUrl', imageUrl);
     updatedData.images = imageUrl;
       
   }
