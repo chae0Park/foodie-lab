@@ -3,15 +3,16 @@ import CheckAccessToken from '@/components/check-accessToken';
 import WriteLinkBtn from '@/components/common/write-link-btn';
 import Grid from '@/components/common/grid';
 import { getItems } from '@/lib/item';
+import { Suspense } from 'react';
 
 
 async function Items(){
     const items = await getItems(); 
-    return <Grid items={items} />
+    return <Grid data={items} />
 }
 
 
-export default function NearBuy(){
+export default function NearBuyPage(){
     return(
         <CheckAccessToken>
             <header className={classes.header}>

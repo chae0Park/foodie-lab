@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import SubmitButton from '@/components/submit-button'
 import { usePathname } from 'next/navigation';
 
-export default function PostForm() {
+export default function PostForm({}) {
     const { data: session, status } = useSession();
     const path = usePathname();
 
@@ -18,7 +18,6 @@ export default function PostForm() {
       if(!accessToken){
         notFound();
       }
-    
     
       const handleSubmit = async (e) => {
         e.preventDefault();  
@@ -44,7 +43,7 @@ export default function PostForm() {
         reader.onload = async () => {
           const imageBase64 = reader.result.split(',')[1]; //extracting string
     
-          const response = await fetch('/api/recipe', {
+          const response = await fetch('/api/community', {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${accessToken}`,  // JWT 토큰을 헤더에 포함시켜 전송
@@ -53,11 +52,16 @@ export default function PostForm() {
             body: JSON.stringify({
               ...formDataObj,
               imageBase64,
+              path // for categorising the post
             }),  // FormData를 요청의 body로 전달
           });
           if (response.ok) {
             // 성공 시 리디렉션
-            window.location.href = '/meals';  
+            if(path.includes('nearbuy')){
+            window.location.href = '/community/nearbuy'; 
+            }else if(path.includes('events')){
+              window.location.href = '/community/events'; 
+            } 
           } else {
             // 오류 처리
             console.error('폼 제출 실패');
@@ -96,8 +100,16 @@ export default function PostForm() {
                   <input type="text" id="title" name="title" required />
               </p>
               <p>
-                  <label htmlFor="summary">Detail</label>
-                  <input type="text" id="summary" name="summary" required />
+                {path.includes('nearbuy') ?
+                  <>
+                    <label htmlFor="summary">Price</label>
+                    <input type="text" id="summary" name="summary" required placeholder='$'/>
+                  </> :
+                  <>
+                    <label htmlFor="summary">Address</label>
+                    <input type="text" id="summary" name="summary" required />
+
+                  </>}
               </p>
               <p>
                   <label htmlFor="instructions">Instructions</label>

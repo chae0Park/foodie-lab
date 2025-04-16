@@ -2,9 +2,6 @@
 import classes from '../../share/page.module.css';
 import { getRecipe } from '@/lib/recipe';
 import { notFound } from 'next/navigation';
-// import ImagePicker from '@/components/meals/image-picker';
-// import SubmitButton from '@/components/submit-button';
-// import Input from './edit-input';
 import EditForm from './edit-input';
 
 export default async function EditMealPage({ params }) {

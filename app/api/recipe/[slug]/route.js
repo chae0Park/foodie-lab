@@ -73,7 +73,7 @@ export async function PUT(req) {
 
   const slug = body.slug
 
-  //레시피 데이터 업데이트트
+  //레시피 데이터 업데이트
   const updatedData = {
     title: body.title,
     summary: body.summary,

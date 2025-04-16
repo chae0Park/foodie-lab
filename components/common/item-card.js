@@ -16,14 +16,17 @@ export default function ItemCard({ title, slug, images, summary, author }) {
         </div>
         <div className={classes.headerText}>
           <h2>{title}</h2>
-          <p>by {author.name}</p>
+          <p>added by {author.name}</p>
         </div>
       </header>
       <div className={classes.content}>
-        <p className={classes.summary}>{summary}</p>
+        {path.includes('/nearbuy') 
+          ? <p className={classes.summary}>$ &nbsp;{summary}</p>
+          : <p className={classes.summary}>{summary}</p>
+        }
         <div className={classes.actions}>
         {path.startsWith('/meals') 
-            ? <Link href={`/meals/${slug}`}>View Details</Link>
+            ? <Link href={`/meals/${slug}`} >View Details</Link>
             : path.startsWith('/community') 
             ? path.includes('/nearbuy') 
                 ? <Link href={`/community/nearbuy/${slug}`}>View Details</Link>
