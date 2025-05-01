@@ -1,5 +1,5 @@
-//api/community/route.js
-import { NextResponse } from 'next/server';
+//api/recipe/route.js
+import { NextRequest, NextResponse } from 'next/server';
 import fs from 'node:fs';
 import slugify from 'slugify';
 import xss from 'xss';
@@ -8,36 +8,60 @@ import { verifyJwf } from '@/lib/jwt';  // jwt verification import
 import kroman from 'kroman';
 
 // helper function
-function isInvalidText(text) {
+function isInvalidText(text: string): boolean {
   return !text || text.trim() === '';
 }
 
+let slug:string;
+
+function generateUniqueSlug(title: string): string {
+  const baseSlug = title.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\-]+/g, "");
+  const randomSuffix = Math.floor(Math.random() * 10000);
+  return slug = `${baseSlug}-${randomSuffix}`;
+}
+
+interface RecipeRequestBody {
+  title: string;
+  instructions: string;
+  imageBase64: string;
+  youtubeLink?: string;
+  ingredients: string;
+  totalCost?: string;
+  totalTime?: string;
+}
+
+interface JwtUser {
+  id: number;
+  email: string;
+  name: string;
+  // Add other properties as needed
+}
+
+
 /* next.js 에서 메소드 사용할 때 function 이름으로 명시적으로 나타내야 하고 default가 아닌 export만 사용*/
-export async function POST(req) {
-  console.log('api/community/route.js호출');
+export async function POST(req: NextRequest) {
+  console.log('api/recipe/route.js호출');
 
   // Authorization 헤더 확인
-  const authorizationHeader = req.headers.get('Authorization');
+  const authorizationHeader: string | null = req.headers.get('Authorization');
 
     const accessToken = authorizationHeader?.split(' ')[1];
     if (!accessToken) {
         return NextResponse.json({ error: 'Missing Token' },{ status: 401 });
-        //return console.log('accessToken 없음')
-
     }else{
       console.log('$$$ accessToken의 값은?', accessToken);
     }
 
-    const user = verifyJwf(accessToken); 
+    const user = verifyJwf(accessToken) as JwtUser; 
 
     try {
-      const body = await req.json();
-      const { title, summary, instructions, imageBase64, path } = body;
-      console.log('community-body의 값은?', body);
+      const body: RecipeRequestBody = await req.json();
+      const { title, instructions, imageBase64, youtubeLink, ingredients, totalCost, totalTime } = body;
+
       // Validation
       if (
         isInvalidText(title) ||
-        isInvalidText(summary) ||
+        isInvalidText(ingredients) ||
         isInvalidText(instructions) ||
         !imageBase64
       ) {
@@ -46,7 +70,7 @@ export async function POST(req) {
 
       // Slug 및 XSS 처리
       const kromanTitle = kroman.parse(title);
-      const slug = slugify(kromanTitle, { lower: true });
+      slug = slugify(kromanTitle, { lower: true });
       const sanitizedInstructions = xss(instructions);
 
       //base64 이미지를 파일로 변환
@@ -63,33 +87,42 @@ export async function POST(req) {
       // 이미지 URL 설정
       const imageUrl = `/images/${fileName}`;
 
-      //카테고리 설정 
-      let category;
-      if(path.includes('nearbuy')){
-        category = 'ITEM';
-      }else if(path.includes('events')){
-        category = 'EVENT';
+      if(totalCost){
+        console.log('💰totalCost',totalCost);
       }
 
-      // Prisma로 데이터 저장
-      const newRecipe = await prisma.post.create({
+      // Prisma로 데이터 저장-----------------------------------------------
+      //저장 전 중복 슬러그 체크 
+      const existingItemSlug = await prisma.item.findUnique({
+        where: { slug },
+      });
+
+      if(existingItemSlug){
+        generateUniqueSlug(slug);
+      }
+
+
+      const newRecipe = await prisma.recipe.create({
         data: {
           title,
           slug,
-          summary,
+          ingredients,
+          instructions: sanitizedInstructions,
           author: {
               connect : {id : user.id},
           },
-          instructions: sanitizedInstructions,
-          categories: category,
+          ...(youtubeLink ? { youtubeLink } : {}),
+          ...(totalCost && { totalCost }), 
+          ...(totalTime && { totalTime }), 
         },
       });
 
       //post인 recipe의 id가 생성된 후 이미지 저장 
-      await prisma.postImage.create({
+      await prisma.image.create({
           data: {
               url: imageUrl,
-              postId: newRecipe.id
+              type: 'RECIPE',
+              recipeId: newRecipe.id
           },
       });
 

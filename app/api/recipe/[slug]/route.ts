@@ -1,19 +1,29 @@
 // app/api/recipe/[slug]/route.js 
 
 import { deleteRecipe, updateRecipe } from '@/lib/recipe';
-import { NextResponse } from 'next/server';
 import { verifyJwf } from '@/lib/jwt';  // jwt verification import
 import fs from 'node:fs';
-// import { redirect } from "next/navigation";
-
+import { NextRequest, NextResponse } from 'next/server';
 
 // helper function
-function isInvalidText(text) {
-  return !text || text.trim() === '';
-}
+// function isInvalidText(text: string): boolean {
+//   return !text || text.trim() === '';
+// }
 
-export async function DELETE(request) {
-  const url = new URL(request.url);  // 요청 URL 객체를 생성
+
+type UpdatedData = {
+  title: string,
+  ingredients: string,
+  totalCost:string,
+  totalTime:string,
+  youtubeLink:string,
+  instructions: string,
+  images?: string,
+};
+
+
+export async function DELETE(request: NextRequest): Promise<NextResponse> {
+  const url= new URL(request.url);  // 요청 URL 객체를 생성
   const slug = url.pathname.split('/')[3];  // 슬러그는 URL 경로에서 3번째 부분에 위치
   console.log('delete api에 전달된 slug:', slug);
 
@@ -26,19 +36,8 @@ export async function DELETE(request) {
   }
 }
 
-
-/*
-[slug] 를 이용해 slug값을 추출하지 못하는 상황이라 dir를 
-app/api/recipe/route.js 로 수정해도 됨. 
-
-그렇다면 
-
-[문제]
-api에서 [slug]를 이용해 slug의 값을 추출하는 방법은?
-*/
-
 //수정하기 api만들기 
-export async function PUT(req) {
+export async function PUT(req: NextRequest):  Promise<NextResponse> {
   console.log('api/recipe/[slug]/route.js호출');
 
   //authentication 검사 먼저 하고 
@@ -59,35 +58,25 @@ export async function PUT(req) {
   console.log('바디에 데이터 잘 실려왔는지 확인:', body);
   
 
-  //validation
-  //const { title, slug, summary, instructions, imageBase64 } = body;
-  // if (
-  //       isInvalidText(title) || !slug ||
-  //       
-  //       isInvalidText(summary) ||
-  //       isInvalidText(instructions) || !imageBase64
-  //       
-  //     ) {
-  //       return NextResponse.json({ message: 'Invalid input' }, {status : 400});
-  // }
 
   const slug = body.slug
 
   //레시피 데이터 업데이트
-  const updatedData = {
+  const updatedData: UpdatedData = {
     title: body.title,
-    summary: body.summary,
+    ingredients: body.ingredients,
+    totalCost:body.totalCost,
+    totalTime:body.totalTime,
+    youtubeLink:body.youtubeLink,
     instructions: body.instructions,
   };
 
-  let imageBase64;
-  if(body.imageBase64){
-    imageBase64 = body.imageBase64;
-  }
+  let imageBase64: string | undefined = body.imageBase64;  
+  
 
   //이미지 저장
-  let imageUrl;
-  if (imageBase64) {
+  let imageUrl : string | undefined;  // 이미지 URL 초기화
+  if (typeof imageBase64 === 'string') {
     const extension = 'jpg';
     const now = new Date();
     const dateString = now.toISOString().replace(/[-:]/g, "").split('.')[0];  // "2025-03-19T10:30:45" 형식을 "20250319T103045"로 변환

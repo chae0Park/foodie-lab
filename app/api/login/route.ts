@@ -2,12 +2,20 @@
 import { signJwtAccessToken, signJwtRefreshToken } from '@/lib/jwt';
 import prisma from '@/lib/prisma'
 import * as bcrypt from 'bcrypt'
+import { NextRequest } from 'next/server';
+import { User } from '@prisma/client'; // Prisma에서 생성된 타입
 
 
-export async function POST(request) {
-  const body = await request.json();
+interface LoginRequest {
+  email: string;
+  password: string;
+}
 
-  const user = await prisma.user.findFirst({
+
+export async function POST(request: NextRequest): Promise<Response> {
+  const body:LoginRequest  = await request.json();
+
+  const user: User | null = await prisma.user.findFirst({
     where: {
       email: body.email,
     },
@@ -15,11 +23,11 @@ export async function POST(request) {
 
   // 패스워드도 동일한지 확인
   if (user && (await bcrypt.compare(body.password, user.password))) {
-    const { password, ...userWithoutPass } = user
+    const { password, ...userWithoutPass } = user;
 
     //토큰
-    const accessToken = signJwtAccessToken(userWithoutPass);
-    const refreshToken = signJwtRefreshToken(userWithoutPass); 
+    const accessToken: string = signJwtAccessToken(userWithoutPass);
+    const refreshToken: string = signJwtRefreshToken(userWithoutPass); 
 
      // refreshToken을 HTTP-only 쿠키로 설정 : 클라이언트 측 JavaScript에서 접근할 수 없다 - 서버에서 해당 토큰을 처리해야 함 
      const cookieOptions = {
