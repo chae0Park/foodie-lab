@@ -1,8 +1,8 @@
-// auth.js 
+// lib > auth.js 
 import prisma from "./prisma";
 import * as bcrypt from 'bcrypt'
 
-export async function saveUser(user){
+export async function saveUser(user: { email: string; password: string; name: string }){
     const newUser = await prisma.user.create({
         data: {
             email: user.email,

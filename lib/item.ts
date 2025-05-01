@@ -1,15 +1,33 @@
 import prisma from "./prisma";
+import { Item } from "@prisma/client";
 
 
-// recipe랑은 다르게 multi file upload가 가능해야한다
+type ItemWithImagesAndAuthor = Item & {
+    images: { 
+        id: number;
+        url: string 
+    }[];
+    
+    author: {
+      name: string;
+      email: string;
+    };
+  };
 
+
+  type UpdatedData = {
+    title: string;
+    price: string;
+    instructions: string;
+    tradeType: string;
+    itemType: string;
+    images?: string | string[];
+  };
+  
+
+//전체 아이템 불러오기
 export async function getItems(){
-    const items = await prisma.post.findMany({
-        where: {
-            categories: {
-                in: ['ITEM'],
-            },
-        },
+    const items: ItemWithImagesAndAuthor[] = await prisma.item.findMany({
         include: {
             images: true,  // PostImage 관계를 포함시키기
             author: {      // User (author) 관계를 포함시키기
@@ -18,20 +36,21 @@ export async function getItems(){
                     email: true // 이메일 등 필요한 추가 필드도 선택할 수 있습니다
                 }
             },
+            //todo: 좋아요 포함
         },
     });
-    //todo: images author 관계형으로 만 생성하지 말고 실질적인 값을 넣어야 가지고 올 때 훨싼 편함 
     // 이미지를 URL만 담은 배열로 변환
   const itemsWithImageUrls = items.map(item => ({
     ...item,
-    images: item.images[0].url,  // 각 이미지의 URL만 추출
+    images: item.images[0]?.url,  // 각 이미지의 URL만 추출
   }));
 
   return itemsWithImageUrls;
 }
 
-export async function getItem(slug){
-    const item = await prisma.post.findUnique({
+//특정 아이템 불러오기
+export async function getItem(slug: string){
+    const item = await prisma.item.findUnique({
         where: {
             slug: slug,
         },
@@ -52,26 +71,29 @@ export async function getItem(slug){
     return item;
 }
 
-export async function updateItem(slug, updatedItem){
+// 아이템 수정 
+export async function updateItem(slug: string , updatedItem: UpdatedData){
     console.log('updatedRecipe db로 전달된 데이터:', updatedItem);
-    const item = await prisma.post.findUnique({
+    const item: ItemWithImagesAndAuthor = await prisma.item.findUnique({
         where: {
             slug: slug,
         },
         include: {
-            images: true,  // PostImage 관계를 포함시키기
+            images: true,  
             author: true, 
         },
     });
 
     console.log('slug로 찾은 레시피의 이미지 아이디: ', item.images[0].id);
 
-    await prisma.post.update({
+    await prisma.item.update({
         where: { slug: slug },
         data: {
             title: updatedItem.title,  // 수정된 title
-            summary: updatedItem.summary,  // 수정된 summary
+            price: updatedItem.price,  // 수정된 price
             instructions: updatedItem.instructions,  // 수정된 instructions
+            tradeType: updatedItem.tradeType,  // 수정된 tradeType
+            itemType: updatedItem.itemType,  // 수정된 itemType
             images: updatedItem.images ? {
                 update: (Array.isArray(updatedItem.images) ? updatedItem.images : [updatedItem.images])
                     .map(imageUrl => ({
@@ -86,9 +108,9 @@ export async function updateItem(slug, updatedItem){
         });
 }
 
-export async function deleteItem(slug){
+export async function deleteItem(slug: string){
     // 데이터 삭제
-    await prisma.post.delete({
+    await prisma.item.delete({
         where: { slug: slug }
     });
 }
