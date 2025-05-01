@@ -3,7 +3,11 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function DeleteButton({ slug }) {
+interface DeleteButtonProps {
+    slug: string;
+  }
+
+export default function DeleteButton({ slug }:DeleteButtonProps ) {
     const [isDeleting, setIsDeleting] = useState(false);
     const router = useRouter();
 

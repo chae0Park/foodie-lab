@@ -39,5 +39,5 @@ export default function MealsPage(){
         </>
     )
         
-    //suspense tag wont work at the moment since Meal() isn't a async function..
+   
 }

@@ -1,7 +1,13 @@
 'use client';
+import { ReactNode } from 'react';
 import { useSession } from "next-auth/react";
 
-export default function CheckSession({ children, authorEmail }) {
+interface CheckSessionProps {
+    children: ReactNode;
+    authorEmail: string;
+  }
+
+export default function CheckSession({ children, authorEmail }: CheckSessionProps) {
     const { data: session } = useSession();
 
     if (session && session.user && session.user.email === authorEmail) {

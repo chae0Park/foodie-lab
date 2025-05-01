@@ -7,8 +7,14 @@ import CheckSession from './check-auth'
 import Link from 'next/link';
 import DeleteButton from './DeleteButton';
 
+interface MealDetailParams {
+  params: {
+    mealSlug: string;
+  };
+}
+
 // 동적으로 메타데이터 설정
-export async function generateMetadata({ params }) {
+export async function generateMetadata({ params }: MealDetailParams) {
     const recipe = await getRecipe(params.mealSlug);  // await 추가
     if (!recipe) {
         return {
@@ -22,7 +28,7 @@ export async function generateMetadata({ params }) {
     };
 }
 
-export default async function MealDetailPage({ params }){
+export default async function MealDetailPage({ params }: MealDetailParams){
     const recipe = await getRecipe(params.mealSlug);
 
     if(!recipe){
@@ -41,7 +47,9 @@ export default async function MealDetailPage({ params }){
                 <p className={classes.creator}>
                     by <a href={`mailto: ${recipe.author.email}`}>{recipe.author.name}</a>
                 </p>
-                <p className={classes.summary}>{recipe.summary}</p>
+                <p className={classes.ingredients}>Ingredients : {recipe.ingredients}</p>
+                <p className={classes.totalTime}>⏱️ {recipe.totalTime} mins</p>
+                <p className={classes.youtubeLink}>youtube Link🔗 : <a href={recipe.youtubeLink}>{recipe.youtubeLink}</a> </p>
                 <CheckSession authorEmail={recipe.author.email}>
                     <Link href={`/meals/${recipe.slug}/edit`}>edit</Link>
                     <DeleteButton slug={recipe.slug} />
