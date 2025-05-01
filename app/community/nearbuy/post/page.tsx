@@ -1,9 +1,9 @@
-import PostForm from "@/components/common/post-form";
+import ItemPostForm from './components/item-post-form';
 
 export default function NearbuyPostPage(){
     return(
         <>
-            <PostForm />
+            <ItemPostForm />
         </>
     )
 }

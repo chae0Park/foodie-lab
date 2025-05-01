@@ -5,7 +5,7 @@ import Grid from '@/components/common/grid';
 import { getEvents } from '@/lib/event';
 import { Suspense } from 'react';
 
-async function Events(){
+async function Events() {
     const events = await getEvents(); 
     return <Grid data={events} />
 }

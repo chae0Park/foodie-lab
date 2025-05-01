@@ -1,12 +1,11 @@
 // app/community/events/[eventSlug]/edit/page.js
 import classes from './page.module.css';
-import { getItem } from '@/lib/item';
+import { getEvent } from '@/lib/event';
 import { notFound } from 'next/navigation';
-import EditForm from '@/components/common/edit-input';
+import EditForm from './event-edit-form';
 
-export default async function EventEditPage({ params }) {
-  const event = await getItem(params.eventSlug);
-  const eventSlug = params.eventSlug;
+export default async function EventEditPage({ params }: { params: { eventSlug: string } }) {
+  const event  = await getEvent(params.eventSlug);
 
     if(!event){
         notFound();
@@ -18,7 +17,7 @@ export default async function EventEditPage({ params }) {
         <h1>Edit your <span className={classes.highlight}>event</span></h1>
       </header>
       <main className={classes.main}>
-        <EditForm data={event} params={eventSlug}/>
+        <EditForm data={event}/>
       </main>
     </>
   );

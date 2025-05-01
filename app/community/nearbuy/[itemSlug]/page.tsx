@@ -8,7 +8,7 @@ import DeleteButton from '@/components/common/DeleteButton';
 import { getItem } from '@/lib/item';
 
 // 동적으로 메타데이터 설정
-export async function generateMetadata({ params }) {
+export async function generateMetadata({ params }: { params: { itemSlug: string } }) {
     const data = await getItem(params.itemSlug);  // await 추가
     if (!data) {
         return {
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }) {
     };
 }
 
-export default async function NearbuyDetailPage({ params }) {
+export default async function NearbuyDetailPage({ params }: { params: { itemSlug: string } }) {
     const item = await getItem(params.itemSlug);
 
     if (!item) {
@@ -35,9 +35,8 @@ export default async function NearbuyDetailPage({ params }) {
         <>
         <div className={classes.headerTop}>
             <h1>{item.title}</h1>
-            <p className={classes.creator}>
-                <a href={`mailto: ${item.author.email}`}>{item.author.name}</a>
-            </p>
+            <p className={classes.creator}>{item.author.name}</p>
+            <button>채팅하기</button>
         </div>
         
             
@@ -48,13 +47,11 @@ export default async function NearbuyDetailPage({ params }) {
             </div>
 
             <div className={classes.headerText}>
-                <div className={classes.titleCreator}>
-                
-                    
+                <div className={classes.titleCreator}> 
                 </div>
                 
                 <div className={classes.priceEditDelete}>
-                    <p className={classes.summary}>${item.summary}</p>
+                    <p className={classes.price}>${item.price}</p> 
                     <CheckSession authorEmail={item.author.email}>
                         <div className={classes.editDelete}>
                             <Link href={`/community/nearbuy/${item.slug}/edit`}>edit</Link>
@@ -62,7 +59,10 @@ export default async function NearbuyDetailPage({ params }) {
                         </div>
                     </CheckSession>
                 </div>
+                <p className={classes.tradeType}>{item.tradeType}</p> 
+                <p className={classes.itemType}>{item.itemType}</p> 
                 <main >
+                    description:
                     <p
                         className={classes.instructions}
                         dangerouslySetInnerHTML={{

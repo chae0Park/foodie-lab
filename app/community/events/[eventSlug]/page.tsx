@@ -5,11 +5,12 @@ import Image from 'next/image';
 import CheckSession from '@/components/CheckSession';
 import Link from 'next/link';
 import DeleteButton from '@/components/common/DeleteButton';
-import { getItem } from '@/lib/item';
+import { getEvent } from '@/lib/event';
+import { Event } from '@prisma/client';
 
-// 동적으로 메타데이터 설정
-export async function generateMetadata({ params }) {
-    const data = await getItem(params.eventSlug);  // await 추가
+// 동적으로 메타데이터 설정- data fetching code 
+export async function generateMetadata({ params }: { params: { eventSlug: string } }) {
+    const data: Event = await getEvent(params.eventSlug);  // await 추가
     if (!data) {
         return {
             title: 'Data Not Found',
@@ -18,12 +19,12 @@ export async function generateMetadata({ params }) {
     }
     return {
         title: data.title,
-        description: data.summary,
+        description: data.instructions,
     };
 }
 
-export default async function EventsDetailPage({ params }) {
-    const event = await getItem(params.eventSlug);
+export default async function EventsDetailPage({ params }: { params: { eventSlug: string } }) {
+    const event = await getEvent(params.eventSlug);
 
     if (!event) {
         notFound();
@@ -42,7 +43,7 @@ export default async function EventsDetailPage({ params }) {
                         added by <a href={`mailto: ${event.author.email}`}>{event.author.name}</a>
                     </p>
                 </div>
-                <CheckSession authorEmail={event.author.email} >
+                <CheckSession>
                     <div className={classes.editDelete}>
                         <Link href={`/community/events/${event.slug}/edit`}>edit</Link>
                         <DeleteButton slug={event.slug} />
@@ -54,13 +55,18 @@ export default async function EventsDetailPage({ params }) {
             <Image src={event.images} alt={event.title} fill/>
         </div>
         <main >
+            <div className={classes.row}>
+                <p className={classes.time}>Event Start Time: {event.time}</p>
+                <p className={classes.estimatedTime}>Event Duration Time: {event.estimatedTime}</p>
+                <p className={classes.address}>Event Venue Address: {event.address}</p>
+                <p className={classes.fee}>Event Fee: {event.fee}</p>
+            </div>
             <p
                 className={classes.instructions}
                 dangerouslySetInnerHTML={{
                     __html: event.instructions,
                 }}
             >
-
             </p>
         </main>
         </>
