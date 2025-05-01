@@ -7,15 +7,16 @@ import { useState } from 'react'
 import { signIn } from 'next-auth/react'
 
 export default function SignIn() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState(''); 
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [error, setError] = useState<string>(''); 
 
-    const handleSubmit = async (event) => {
+
+    const handleSubmit = async (event :React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         // NextAuth 로그인 요청
-        const res = await signIn('credentials', {
+        const res  = await signIn('credentials', {
             email,
             password,
             redirect: false, // 로그인 후 리디렉션 방지

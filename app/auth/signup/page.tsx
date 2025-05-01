@@ -3,13 +3,15 @@
 import classes from './page.module.css'
 import Input from '@/components/input'
 import SubmitButton from '@/components/submit-button'
-import { useFormState } from 'react-dom';
+import { useActionState } from "react";
 import { validateUser } from '@/lib/action';
 
-
+type Message = {
+    message: string | null;
+}
 
 export default function SignUp() {
-    const [ state, formAction ] = useFormState(validateUser, {message: null});
+    const [state, formAction] = useActionState<Message, FormData>(validateUser, {message: null});
     
     return (
         <div>
@@ -19,7 +21,7 @@ export default function SignUp() {
                 </h1>
             </header>
             <main className={classes.main}>
-                <form className={classes.form} action={formAction} method='POST'>
+                <form className={classes.form} action={formAction}>
                     <Input type={'email'} name={'email'} label={'Your email'} />
                     <Input type={'password'} name={'password'} label={'Your password'} />
                     <Input type={'text'} name={'name'} label={'Your name'} />
