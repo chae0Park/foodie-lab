@@ -5,6 +5,9 @@ import ImagePicker from '@/components/meals/image-picker';
 import { useSession } from "next-auth/react";
 import SubmitButton from '@/components/submit-button'
 import { usePathname } from 'next/navigation';
+import { notFound } from 'next/navigation';
+
+
 
 export default function PostForm({}) {
     const { data: session, status } = useSession();
@@ -14,12 +17,12 @@ export default function PostForm({}) {
         return <div>Loading...</div>;
       }
     
-      const accessToken = session.user.accessToken;
+      const accessToken = session?.user.accessToken;
       if(!accessToken){
         notFound();
       }
     
-      const handleSubmit = async (e) => {
+      const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();  
       
         if(!accessToken){
@@ -28,20 +31,26 @@ export default function PostForm({}) {
           console.log('accessToken 값은?', accessToken);
         }
     
-        const formData = new FormData(e.target);  
-        const formDataObj = {};
+        const form = e.target as HTMLFormElement;
+        const formData = new FormData(form); 
+
+        const formDataObj :Record<string, any> ={};
         formData.forEach((value, key) => {
-          formDataObj[key] = value;
+          formDataObj [key] = value;
         });
     
         console.log("formData 객체", formDataObj);
     
         //이미지 파일을 바이너리 (01010100)에서 문자형태로 변환한다 = base64
-        const image = formDataObj.image;
+        const image = formDataObj.image as File;
         const reader = new FileReader();
         reader.readAsDataURL(image);
         reader.onload = async () => {
-          const imageBase64 = reader.result.split(',')[1]; //extracting string
+        const result  = reader.result;
+        let imageBase64 = '';
+        if(typeof result === 'string'){
+          imageBase64 = result.split(',')[1]; // base64 문자열만 추출
+        }
     
           const response = await fetch('/api/community', {
             method: 'POST',
@@ -87,12 +96,12 @@ export default function PostForm({}) {
                   <p>
                       <label htmlFor="name">Your name</label>
                       {session && session.user &&
-                          <input type="email" id="email" name="email" value={session.user.name} required disabled />}
+                          <input type="email" id="email" name="email" value={session.user.name ?? ''} required disabled />}
                   </p>
                   <p>
                       <label htmlFor="email">Your email</label>
                       {session && session.user &&
-                          <input type="email" id="email" name="email" value={session.user.email} required disabled />}
+                          <input type="email" id="email" name="email" value={session.user.email ?? ''} required disabled />}
                   </p>
               </div>
               <p>
@@ -116,7 +125,7 @@ export default function PostForm({}) {
                   <textarea
                       id="instructions"
                       name="instructions"
-                      rows="10"
+                      rows={10}
                       required
                   ></textarea>
               </p>

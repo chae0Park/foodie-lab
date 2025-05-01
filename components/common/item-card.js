@@ -5,7 +5,7 @@ import classes from './item-card.module.css';
 import { usePathname } from "next/navigation";
 
 
-export default function ItemCard({ title, slug, images, summary, author }) {  
+export default function ItemCard({ title, slug, images, summary, price, author }) {  
     const path = usePathname();
 
     return (
@@ -21,7 +21,7 @@ export default function ItemCard({ title, slug, images, summary, author }) {
       </header>
       <div className={classes.content}>
         {path.includes('/nearbuy') 
-          ? <p className={classes.summary}>$ &nbsp;{summary}</p>
+          ? <p className={classes.summary}>$ &nbsp;{price}</p>
           : <p className={classes.summary}>{summary}</p>
         }
         <div className={classes.actions}>

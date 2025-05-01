@@ -1,19 +1,25 @@
 "use client"
 
-import { useRef, useState } from 'react';
+import { JSX, useRef, useState } from 'react';
 import classes from './image-picker.module.css';
 import Image from 'next/image';
 
-export default function ImagePicker({ label, name, editImg }){
-    const [pickedImage, setPickedImage] = useState();
-    const imageInput = useRef();
+interface ImagePickerProps {
+    label: string;
+    name: string;
+    editImg?: { id: number; url: string }[];
+}
 
-    function handlePickClick(){
-        imageInput.current.click();
+export default function ImagePicker({ label, name, editImg }: ImagePickerProps): JSX.Element {
+    const [pickedImage, setPickedImage] = useState<String | ArrayBuffer | null>(null);
+    const imageInput = useRef<HTMLInputElement>(null);
+
+    function handlePickClick(): void{
+        imageInput.current?.click();
     }
 
-    function handleImageChange(event){
-        const file = event.target.files[0];
+    function handleImageChange(event: React.ChangeEvent<HTMLInputElement>): void{
+        const file = event.target.files?.[0];
 
         if(!file){
             setPickedImage(null);
@@ -35,14 +41,29 @@ export default function ImagePicker({ label, name, editImg }){
             <label htmlFor={name}>{label}</label>
             <div className={classes.controls}>
                 <div className={classes.preview}>
-                    {!pickedImage && !editImg
+                    {/* {!pickedImage && !editImg
                         ? <p>No image is picked yet.</p>
                         :  <Image 
-                            src={pickedImage ? pickedImage : editImg}
+                            src={typeof pickedImage === 'string' ? pickedImage : editImg?.[0].url ?? ''}
                             alt='The image selected by the user.'
                             fill
                          />
-                    }
+                    } */}
+                    {pickedImage ? (
+                    <Image 
+                    src={pickedImage as string}
+                    alt='The image selected by the user.'
+                    fill
+                    />
+                ) : editImg?.[0]?.url ? (
+                    <Image 
+                    src={editImg[0].url}
+                    alt='Previously uploaded image.'
+                    fill
+                    />
+                ) : (
+                    <p>No image is picked yet.</p>
+                )}
                 </div>
                 <input
                     className={classes.input} 
